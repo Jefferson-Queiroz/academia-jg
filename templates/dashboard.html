@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3">
+
+    <div class="col-md-3">
+        <div class="card text-bg-primary shadow">
+            <div class="card-body text-center">
+                <h5>Total de Alunos</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-success shadow">
+            <div class="card-body text-center">
+                <h5>Ativos</h5>
+                <h2>{{ ativos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-danger shadow">
+            <div class="card-body text-center">
+                <h5>Em Atraso</h5>
+                <h2>{{ atrasados }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-warning shadow">
+            <div class="card-body text-center">
+                <h5>Vencem Hoje</h5>
+                <h2>{{ vencem_hoje }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

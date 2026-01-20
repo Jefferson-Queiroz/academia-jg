@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Faturamento Mensal</h2>
+
+<canvas id="graficoMensal"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const meses = {{ meses | tojson }};
+const totais = {{ totais | tojson }};
+
+const ctx = document.getElementById('graficoMensal').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: meses,
+        datasets: [{
+            label: 'Faturamento (R$)',
+            data: totais,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

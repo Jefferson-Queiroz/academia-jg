@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">📊 Relatório Financeiro</h2>
+
+    <form method="POST" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Mês</label>
+            <input type="month" name="mes" class="form-control" required>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary w-100">
+                🔍 Gerar Relatório
+            </button>
+        </div>
+    </form>
+
+    {% if mes %}
+    <div class="alert alert-success">
+        <strong>Total do mês:</strong> R$ {{ total }}
+    </div>
+
+    <a href="{{ url_for('relatorio_pdf', mes=mes) }}"
+       class="btn btn-danger mb-3">
+        📄 Exportar PDF
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Data</th>
+                    <th>Aluno</th>
+                    <th>Plano</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pagamentos %}
+                <tr>
+                    <td>{{ p.data_pagamento }}</td>
+                    <td>{{ p.nome }}</td>
+                    <td>{{ p.plano }}</td>
+                    <td>R$ {{ p.valor }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

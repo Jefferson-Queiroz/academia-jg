@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Academia JG</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Academia JG">
+    <h1>Academia JG</h1>
+</header>
+
+<nav style="padding: 10px;">
+    <a href="/alunos">Cadatro de Alunos</a>
+    <a href="/pagamentos">Pagamentos</a>
+    <a href="/financeiro">Financeiro</a>
+    <a href="/dashboard">Dashboard</a>    
+    <a href="{{ url_for('relatorio') }}">Relatórios</a>
+    <a href="{{ url_for('grafico') }}">Gráficos</a>
+    <a href="/logout">Sair</a>
+</nav>
+
+<hr>
+
+<main style="padding: 20px;">
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

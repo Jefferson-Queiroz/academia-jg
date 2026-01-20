@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Academia JG</title>
+</head>
+<body style="background:#000;color:white;text-align:center;padding-top:100px;">
+
+    <img src="{{ url_for('static', filename='img/logo.png') }}" height="120"><br><br>
+
+    <form method="post">
+        <input name="usuario" placeholder="Usuário"><br><br>
+        <input name="senha" type="password" placeholder="Senha"><br><br>
+        <button>Entrar</button>
+    </form>
+
+    <hr>
+</body>
+</html>

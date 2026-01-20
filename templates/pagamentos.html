@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Histórico de Pagamentos</h2>
+
+    <table>
+        <tr>
+            <th>Aluno</th>
+            <th>Plano</th>
+            <th>Valor</th>
+            <th>Data</th>
+        </tr>
+
+        {% for p in pagamentos %}
+        <tr>
+            <td>{{ p.nome }}</td>
+            <td>{{ p.plano }}</td>
+            <td>R$ {{ "%.2f"|format(p.valor) }}</td>
+            <td>{{ p.data_pagamento }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

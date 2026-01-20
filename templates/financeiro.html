@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">💰 Financeiro</h2>
+
+    <!-- VENCENDO HOJE -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-warning text-dark fw-bold">
+            📅 Vencendo Hoje
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Aluno</th>
+                        <th>Telefone</th>
+                        <th>Plano</th>
+                        <th>Vencimento</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aluno in vencendo %}
+                    <tr>
+                        <td>{{ aluno.nome }}</td>
+                        <td>{{ aluno.telefone }}</td>
+                        <td>{{ aluno.plano }}</td>
+                        <td>
+                            <span class="badge bg-warning text-dark">
+                                {{ aluno.data_vencimento }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('pagar', id=aluno.id) }}" class="btn btn-success btn-sm">
+                                💰 Pagar
+                            </a>
+                            {% if aluno.whatsapp %}
+                            <a href="{{ aluno.whatsapp }}" target="_blank" class="btn btn-outline-success btn-sm">
+                                📲 WhatsApp
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">
+                            Nenhum vencimento hoje
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EM ATRASO -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white fw-bold">
+            ⛔ Em Atraso
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Aluno</th>
+                        <th>Telefone</th>
+                        <th>Plano</th>
+                        <th>Vencimento</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aluno in atrasados %}
+                    <tr class="table-danger">
+                        <td>{{ aluno.nome }}</td>
+                        <td>{{ aluno.telefone }}</td>
+                        <td>{{ aluno.plano }}</td>
+                        <td>
+                            <span class="badge bg-danger">
+                                {{ aluno.data_vencimento }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('pagar', id=aluno.id) }}" class="btn btn-success btn-sm">
+                                💰 Pagar
+                            </a>
+                            {% if aluno.whatsapp %}
+                            <a href="{{ aluno.whatsapp }}" target="_blank" class="btn btn-outline-light btn-sm">
+                                📲 WhatsApp
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">
+                            Nenhum aluno em atraso
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
