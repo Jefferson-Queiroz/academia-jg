@@ -282,7 +282,6 @@ def alunos():
 
         # 🔁 REDIRECIONA PARA LISTAGEM
         return redirect(url_for('lista_alunos'))
-
     conn.close()
     return render_template('alunos.html')
 
