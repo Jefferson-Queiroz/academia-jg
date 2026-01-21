@@ -26,16 +26,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-def atualizar_status_vencidos():
-    hoje = date.today().isoformat()
-    conn = get_db()
-    conn.execute('''
-        UPDATE alunos
-        SET status = 'Vencido'
-        WHERE data_vencimento < ? AND status = 'Ativo'
-    ''', (hoje,))
-    conn.commit()
-    conn.close()
+
 
 
 def init_db():
@@ -533,7 +524,8 @@ def editar_aluno(id):
         ))
         conn.commit()
         conn.close()
-        return redirect(url_for('alunos'))
+        return redirect(url_for('lista_alunos'))
+
 
     aluno = conn.execute(
         'SELECT * FROM alunos WHERE id=?', (id,)
@@ -554,7 +546,8 @@ def excluir_aluno(id):
     conn.commit()
     conn.close()
 
-    return redirect(url_for('alunos'))
+    return redirect(url_for('lista_alunos'))
+
 
 
 
