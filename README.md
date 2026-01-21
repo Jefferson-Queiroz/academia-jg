@@ -1,49 +1,32 @@
-# 🏋️ Sistema Academia JG
+# 🏋️ Sistema de Gestão de Academia
 
-Sistema web desenvolvido em **Python + Flask + SQLite** para gestão de alunos,
-pagamentos e controle financeiro de academias.
+Sistema web desenvolvido em Flask para controle de alunos, pagamentos e financeiro.
 
 ## 🚀 Funcionalidades
-
-- Login com autenticação
 - Cadastro de alunos
+- Edição e exclusão
 - Controle de vencimentos
 - Status automático (Ativo / Vencido)
-- Financeiro:
-  - Vencendo hoje
-  - Em atraso
-- Pagamentos e histórico
-- Relatórios mensais
-- Exportação em PDF
-- Envio de cobrança via WhatsApp
-- Backup automático do banco de dados
+- Aviso via WhatsApp
+- Controle financeiro
+- Relatórios
+- Backup do banco de dados
 
 ## 🛠 Tecnologias
-
-- Python 3
+- Python
 - Flask
 - SQLite
-- HTML + Bootstrap
-- ReportLab (PDF)
+- Bootstrap
+- ReportLab
 
-## 📦 Instalação
+## ▶️ Como executar localmente
 
-```bash
-git clone https://github.com/SEU_USUARIO/academia-jg.git
-cd academia-jg
 pip install -r requirements.txt
 python app.py
 Acesse:
+http://localhost:5000
 
-cpp
-Copiar código
-http://127.0.0.1:5000
 🔐 Login padrão
+
 Usuário: admin
-
 Senha: 123
-
-📌 Observações
-Projeto educacional com foco em gestão real de academias.
-Pronto para evolução em sistema online ou aplicativo.
-

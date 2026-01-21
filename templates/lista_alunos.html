@@ -16,7 +16,6 @@
     </div>
 </form>
 
-
 <div class="card shadow">
     <div class="card-body">
 
@@ -39,23 +38,25 @@
                     <td>{{ aluno.plano }}</td>
                     <td>{{ aluno.status }}</td>
                     <td class="d-flex gap-2">
+
                         {% if aluno.whatsapp %}
                         <a href="{{ aluno.whatsapp }}" target="_blank" class="btn btn-success btn-sm">
                             📲
                         </a>
                         {% endif %}
 
-                        <a href="{{ url_for('editar_aluno', id=aluno.id) }}" class="btn btn-warning btn-sm">
+                        <a href="{{ url_for('editar_aluno', id=aluno['id']) }}"
+                           class="btn btn-warning btn-sm">
                             ✏️ Editar
                         </a>
 
-                        <a href="{{ url_for('excluir_aluno', id=aluno.id) }}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Deseja excluir este aluno?')">
+                        <a href="{{ url_for('excluir_aluno', id=aluno['id']) }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Deseja excluir este aluno?')">
                             🗑 Excluir
                         </a>
 
                     </td>
-
                 </tr>
                 {% endfor %}
             </tbody>

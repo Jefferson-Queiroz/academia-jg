@@ -549,9 +549,6 @@ def excluir_aluno(id):
     return redirect(url_for('lista_alunos'))
 
 
-
-
-
 # --- LOGOUT ---
 @app.route('/logout')
 def logout():
