@@ -229,7 +229,7 @@ def pagar(id):
 # --- CADASTRO DE ALUNOS ---
 from datetime import date, timedelta
 
-@app.route('/alunos', methods=['GET', 'POST'])
+@app.route('/alunos/cadastro', methods=['GET', 'POST'])
 def alunos():
     if 'usuario' not in session:
         return redirect(url_for('login'))
