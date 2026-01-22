@@ -35,9 +35,6 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-
-
-
 def init_db():
     print("✅ init_db EXECUTADO")
     conn = sqlite3.connect('academia.db')
@@ -679,11 +676,13 @@ def handle_exception(e):
     app.logger.error(f"🔥 ERRO GLOBAL: {e}", exc_info=True)
     return "Erro interno no servidor. Verifique os logs.", 500
 
+# 🔥 GARANTE BANCO EM PRODUÇÃO (Render)
+with app.app_context():
+    init_db()
+
 
 if __name__ == "__main__":
-    init_db()
-    backup_banco()
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
 
 
 
