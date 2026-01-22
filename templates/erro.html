@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="alert alert-danger text-center mt-4">
+    <h2>⚠️ {{ titulo }}</h2>
+    <p>{{ mensagem }}</p>
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">
+        Voltar ao sistema
+    </a>
+</div>
+
+{% endblock %}
