@@ -2,6 +2,11 @@ import logging
 app = Flask(__name__)
 app.secret_key = 'academia_jg_secret'
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+
 # LOGS PARA PRODUÇÃO (Render)
 logging.basicConfig(level=logging.INFO)
 
@@ -25,9 +30,6 @@ def gerar_link_whatsapp(telefone, mensagem):
     return f"https://wa.me/55{telefone}?text={mensagem}"
 
 
-
-app = Flask(__name__)
-app.secret_key = 'academia_jg_secret'
 
 # --- BANCO DE DADOS ---
 def get_db():
