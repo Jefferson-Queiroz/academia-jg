@@ -5,6 +5,8 @@ import sqlite3
 from datetime import date, timedelta
 from whatsapp import enviar_whatsapp
 import json
+import logging
+logging.basicConfig(level=logging.INFO)
 
 def gerar_link_whatsapp(telefone, mensagem):
     if not telefone:
@@ -619,6 +621,7 @@ def backup_manual():
 if __name__ == "__main__":
     init_db()
     backup_banco()
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
+
 
 
