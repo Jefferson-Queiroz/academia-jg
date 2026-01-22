@@ -1,3 +1,11 @@
+import logging
+app = Flask(__name__)
+app.secret_key = 'academia_jg_secret'
+
+# LOGS PARA PRODUÇÃO (Render)
+logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(level=logging.INFO)
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import flash
@@ -5,8 +13,7 @@ import sqlite3
 from datetime import date, timedelta
 from whatsapp import enviar_whatsapp
 import json
-import logging
-logging.basicConfig(level=logging.INFO)
+
 
 def gerar_link_whatsapp(telefone, mensagem):
     if not telefone:
@@ -202,11 +209,11 @@ def pagar(id):
         valor = float(request.form['valor'])
         hoje = date.today()
         nova_data = hoje + timedelta(days=30)
-
-        conn.execute('''
+        try:
+            conn.execute('''
             INSERT INTO pagamentos (aluno_id, data_pagamento, valor, plano)
             VALUES (?, ?, ?, ?)
-        ''', (
+            ''', (
             aluno['id'],
             hoje.isoformat(),
             valor,
@@ -222,8 +229,15 @@ def pagar(id):
         conn.commit()
         conn.close()
         return redirect(url_for('financeiro'))
+    
+    except Exception as e:
+        conn.rollback()
+        app.logger.error(f"Erro ao cadastrar aluno: {e}")
+        flash("Erro ao salvar aluno. Tente novamente.", "danger")
+        return redirect(url_for('alunos'))
+    finally:
+        conn.close()
 
-    conn.close()
     return render_template('pagar.html', aluno=aluno)
 
 
@@ -231,7 +245,7 @@ def pagar(id):
 # --- CADASTRO DE ALUNOS ---
 from datetime import date, timedelta
 
-@app.route('/alunos/cadastro', methods=['GET', 'POST'])
+@app.route('/alunos', methods=['GET', 'POST'])
 def alunos():
     if 'usuario' not in session:
         return redirect(url_for('login'))
@@ -239,42 +253,52 @@ def alunos():
     conn = get_db()
 
     if request.method == 'POST':
-        hoje = date.today()
-        vencimento = hoje + timedelta(days=30)
-        valor = float(request.form['valor'])
+        try:
+            hoje = date.today()
+            vencimento = hoje + timedelta(days=30)
+            valor = float(request.form['valor'])
 
-        cursor = conn.cursor()
+            cursor = conn.cursor()
 
-        cursor.execute('''
-            INSERT INTO alunos (nome, cpf, telefone, plano, data_pagamento, data_vencimento, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            request.form['nome'],
-            request.form['cpf'],
-            request.form['telefone'],
-            request.form['plano'],
-            hoje.isoformat(),
-            vencimento.isoformat(),
-            'Ativo'
-        ))
+            cursor.execute('''
+                INSERT INTO alunos (nome, cpf, telefone, plano, data_pagamento, data_vencimento, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                request.form['nome'],
+                request.form['cpf'],
+                request.form['telefone'],
+                request.form['plano'],
+                hoje.isoformat(),
+                vencimento.isoformat(),
+                'Ativo'
+            ))
 
-        aluno_id = cursor.lastrowid
+            aluno_id = cursor.lastrowid
 
-        cursor.execute('''
-            INSERT INTO pagamentos (aluno_id, data_pagamento, valor, plano)
-            VALUES (?, ?, ?, ?)
-        ''', (
-            aluno_id,
-            hoje.isoformat(),
-            valor,
-            request.form['plano']
-        ))
+            cursor.execute('''
+                INSERT INTO pagamentos (aluno_id, data_pagamento, valor, plano)
+                VALUES (?, ?, ?, ?)
+            ''', (
+                aluno_id,
+                hoje.isoformat(),
+                valor,
+                request.form['plano']
+            ))
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            return redirect(url_for('lista_alunos'))
 
-        # 🔁 REDIRECIONA PARA LISTAGEM
-        return redirect(url_for('lista_alunos'))
+        except Exception as e:
+            conn.rollback()
+            app.logger.error(f"❌ Erro ao cadastrar aluno: {e}")
+            flash("Erro ao cadastrar aluno. Verifique os dados.", "danger")
+            return redirect(url_for('alunos'))
+
+        finally:
+            conn.close()
+            
+        app.logger.info("📌 Tentando cadastrar aluno")
+
     conn.close()
     return render_template('alunos.html')
 
@@ -511,6 +535,7 @@ def editar_aluno(id):
     conn = get_db()
 
     if request.method == 'POST':
+        try:
         conn.execute('''
             UPDATE alunos
             SET nome=?, cpf=?, telefone=?, plano=?, data_pagamento=?, data_vencimento=?
@@ -527,6 +552,15 @@ def editar_aluno(id):
         conn.commit()
         conn.close()
         return redirect(url_for('lista_alunos'))
+    
+    except Exception as e:
+    conn.rollback()
+    app.logger.error(f"Erro ao cadastrar aluno: {e}")
+    flash("Erro ao salvar aluno. Verifique os dados.", "danger")
+    return redirect(url_for('alunos'))
+
+    finally:
+    conn.close()
 
 
     aluno = conn.execute(
@@ -542,7 +576,7 @@ def editar_aluno(id):
 def excluir_aluno(id):
     if 'usuario' not in session:
         return redirect(url_for('login'))
-
+try:
     conn = get_db()
     conn.execute('DELETE FROM alunos WHERE id=?', (id,))
     conn.commit()
@@ -550,6 +584,14 @@ def excluir_aluno(id):
 
     return redirect(url_for('lista_alunos'))
 
+except Exception as e:
+    conn.rollback()
+    app.logger.error(f"Erro ao cadastrar aluno: {e}")
+    flash("Erro ao salvar aluno. Verifique os dados.", "danger")
+    return redirect(url_for('alunos'))
+
+finally:
+    conn.close()
 
 # --- LOGOUT ---
 @app.route('/logout')
@@ -616,12 +658,32 @@ def backup_manual():
     return "Backup criado com sucesso"
 
 
+@app.errorhandler(500)
+def erro_500(e):
+    return render_template(
+        "erro.html",
+        titulo="Erro interno",
+        mensagem="Ocorreu um erro inesperado. Nossa equipe já foi notificada."
+    ), 500
+
+@app.errorhandler(404)
+def erro_404(e):
+    return render_template(
+        "erro.html",
+        titulo="Página não encontrada",
+        mensagem="O endereço acessado não existe."
+    ), 404
+    
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error(f"🔥 ERRO GLOBAL: {e}", exc_info=True)
+    return "Erro interno no servidor. Verifique os logs.", 500
 
 
 if __name__ == "__main__":
     init_db()
     backup_banco()
-    app.run(debug=True)
+    app.run()
 
 
 
