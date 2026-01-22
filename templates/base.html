@@ -20,12 +20,26 @@
 
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('alunos') }}">Cadastro de Alunos</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro') }}">Financeiro</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorio') }}">Relatórios</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('grafico') }}">Gráficos</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('alunos') }}">Cadastro de Alunos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('lista_alunos') }}">Lista de Alunos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('financeiro') }}">Financeiro</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('relatorio') }}">Relatórios</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('grafico') }}">Gráficos</a>
+          </li>
         </ul>
+
 
         <a class="nav-link" href="{{ url_for('alunos') }}">Cadastrar Aluno</a>
         <a class="nav-link" href="{{ url_for('lista_alunos') }}">Listar Alunos</a>

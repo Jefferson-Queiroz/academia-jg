@@ -5,13 +5,8 @@
 
 <form method="GET" class="row g-3 mb-3">
     <div class="col-md-6">
-        <input
-            type="text"
-            name="busca"
-            class="form-control"
-            placeholder="Buscar aluno pelo nome"
-            value="{{ request.args.get('busca', '') }}"
-        >
+        <input type="text" name="busca" class="form-control" placeholder="Buscar aluno pelo nome"
+            value="{{ request.args.get('busca', '') }}">
     </div>
 
     <div class="col-md-2">
@@ -45,33 +40,25 @@
             <tbody>
                 {% for aluno in alunos %}
                 <tr>
-                    <td>{{ aluno.nome }}</td>
-                    <td>{{ aluno.telefone }}</td>
-                    <td>{{ aluno.plano }}</td>
-                    <td>{{ aluno.status if aluno.status else '—' }}</td>
+                    <td>{{ aluno['nome'] }}</td>
+                    <td>{{ aluno['telefone'] }}</td>
+                    <td>{{ aluno['plano'] }}</td>
+                    <td>{{ aluno['status'] }}</td>
+                    <td class="d-flex gap-2">
 
-                    <td class="d-flex gap-2 justify-content-center">
-
-                        {% if aluno.whatsapp %}
-                        <a href="{{ aluno.whatsapp }}"
-                           target="_blank"
-                           class="btn btn-success btn-sm"
-                           title="WhatsApp">
+                        {% if aluno['whatsapp'] %}
+                        <a href="{{ aluno['whatsapp'] }}" target="_blank" class="btn btn-success btn-sm">
                             📲
                         </a>
                         {% endif %}
 
-                        <a href="{{ url_for('editar_aluno', id=aluno.id) }}"
-                           class="btn btn-warning btn-sm"
-                           title="Editar">
-                            ✏️
+                        <a href="{{ url_for('editar_aluno', id=aluno['id']) }}" class="btn btn-warning btn-sm">
+                            ✏️ Editar
                         </a>
 
-                        <a href="{{ url_for('excluir_aluno', id=aluno.id) }}"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Deseja excluir este aluno?')"
-                           title="Excluir">
-                            🗑
+                        <a href="{{ url_for('excluir_aluno', id=aluno['id']) }}" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Deseja excluir este aluno?')">
+                            🗑 Excluir
                         </a>
 
                     </td>
