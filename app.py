@@ -300,7 +300,7 @@ def alunos():
     return render_template('alunos.html')
 
 # --- ALUNOS/LISTA ---
-@app.route('/alunos/lista')
+@app.route('/ista_alunos')
 def lista_alunos():
     if 'usuario' not in session:
         return redirect(url_for('login'))
