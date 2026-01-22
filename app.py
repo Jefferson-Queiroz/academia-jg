@@ -196,46 +196,41 @@ def pagar(id):
         return redirect(url_for('login'))
 
     conn = get_db()
-
     aluno = conn.execute(
         'SELECT * FROM alunos WHERE id = ?',
         (id,)
     ).fetchone()
 
     if request.method == 'POST':
-        valor = float(request.form.get('valor', 0))
-
-        hoje = date.today()
-        nova_data = hoje + timedelta(days=30)
         try:
+            valor = float(request.form.get('valor', 0))
+            hoje = date.today()
+            nova_data = hoje + timedelta(days=30)
+
             conn.execute('''
-            INSERT INTO pagamentos (aluno_id, data_pagamento, valor, plano)
-            VALUES (?, ?, ?, ?)
-            ''', (
-            aluno['id'],
-            hoje.isoformat(),
-            valor,
-            aluno['plano']
-        ))
+                INSERT INTO pagamentos (aluno_id, data_pagamento, valor, plano)
+                VALUES (?, ?, ?, ?)
+            ''', (id, hoje.isoformat(), valor, aluno['plano']))
 
-        conn.execute('''
-            UPDATE alunos
-            SET data_pagamento = ?, data_vencimento = ?, status = 'Ativo'
-            WHERE id = ?
-        ''', (hoje.isoformat(), nova_data.isoformat(), id))
+            conn.execute('''
+                UPDATE alunos
+                SET data_pagamento=?, data_vencimento=?, status='Ativo'
+                WHERE id=?
+            ''', (hoje.isoformat(), nova_data.isoformat(), id))
 
-        conn.commit()
-        conn.close()
-        return redirect(url_for('financeiro'))
-    
-    except Exception as e:
-        conn.rollback()
-        app.logger.error(f"Erro ao cadastrar aluno: {e}")
-        flash("Erro ao salvar aluno. Tente novamente.", "danger")
-        return redirect(url_for('alunos'))
-    finally:
-        conn.close()
+            conn.commit()
+            return redirect(url_for('financeiro'))
 
+        except Exception as e:
+            conn.rollback()
+            app.logger.error(f"Erro ao pagar: {e}", exc_info=True)
+            flash("Erro ao processar pagamento", "danger")
+            return redirect(url_for('financeiro'))
+
+        finally:
+            conn.close()
+
+    conn.close()
     return render_template('pagar.html', aluno=aluno)
 
 
@@ -302,7 +297,7 @@ def alunos():
     return render_template('alunos.html')
 
 # --- ALUNOS/LISTA ---
-@app.route('/ista_alunos')
+@app.route('/lista_alunos')
 def lista_alunos():
     if 'usuario' not in session:
         return redirect(url_for('login'))
@@ -322,29 +317,11 @@ def lista_alunos():
 
     conn.close()
 
-    alunos_formatados = []
-
-    for a in alunos:
-        telefone = a['telefone'] or ''
-        whatsapp = (
-            "https://wa.me/55" +
-            telefone.replace("(", "").replace(")", "")
-                    .replace("-", "").replace(" ", "")
-        )
-
-        alunos_formatados.append({
-            'id': a['id'],
-            'nome': a['nome'],
-            'telefone': telefone,
-            'plano': a['plano'],
-            'status': a['status'],
-            'whatsapp': whatsapp
-        })
-
     return render_template(
         'lista_alunos.html',
-        alunos=alunos_formatados
+        alunos=alunos
     )
+
 
 
 
@@ -535,32 +512,31 @@ def editar_aluno(id):
 
     if request.method == 'POST':
         try:
-        conn.execute('''
-            UPDATE alunos
-            SET nome=?, cpf=?, telefone=?, plano=?, data_pagamento=?, data_vencimento=?
-            WHERE id=?
-        ''', (
-            request.form['nome'],
-            request.form['cpf'],
-            request.form['telefone'],
-            request.form['plano'],
-            request.form['data_pagamento'],
-            request.form['data_vencimento'],
-            id
-        ))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('lista_alunos'))
-    
-    except Exception as e:
-    conn.rollback()
-    app.logger.error(f"Erro ao cadastrar aluno: {e}")
-    flash("Erro ao salvar aluno. Verifique os dados.", "danger")
-    return redirect(url_for('alunos'))
+            conn.execute('''
+                UPDATE alunos
+                SET nome=?, cpf=?, telefone=?, plano=?, data_pagamento=?, data_vencimento=?
+                WHERE id=?
+            ''', (
+                request.form['nome'],
+                request.form['cpf'],
+                request.form['telefone'],
+                request.form['plano'],
+                request.form['data_pagamento'],
+                request.form['data_vencimento'],
+                id
+            ))
 
-    finally:
-    conn.close()
+            conn.commit()
+            return redirect(url_for('lista_alunos'))
 
+        except Exception as e:
+            conn.rollback()
+            app.logger.error(f"Erro ao editar aluno: {e}", exc_info=True)
+            flash("Erro ao salvar aluno", "danger")
+            return redirect(url_for('lista_alunos'))
+
+        finally:
+            conn.close()
 
     aluno = conn.execute(
         'SELECT * FROM alunos WHERE id=?', (id,)
@@ -569,28 +545,28 @@ def editar_aluno(id):
 
     return render_template('editar_aluno.html', aluno=aluno)
 
-
-# --- REMOVER ALUNO ---
+# --- EXCLUIR ALUNO ---
 @app.route('/alunos/excluir/<int:id>')
 def excluir_aluno(id):
     if 'usuario' not in session:
         return redirect(url_for('login'))
-try:
+
     conn = get_db()
-    conn.execute('DELETE FROM alunos WHERE id=?', (id,))
-    conn.commit()
-    conn.close()
+    try:
+        conn.execute('DELETE FROM alunos WHERE id=?', (id,))
+        conn.commit()
+        return redirect(url_for('lista_alunos'))
 
-    return redirect(url_for('lista_alunos'))
+    except Exception as e:
+        conn.rollback()
+        app.logger.error(f"Erro ao excluir aluno: {e}", exc_info=True)
+        flash("Erro ao excluir aluno", "danger")
+        return redirect(url_for('lista_alunos'))
 
-except Exception as e:
-    conn.rollback()
-    app.logger.error(f"Erro ao cadastrar aluno: {e}")
-    flash("Erro ao salvar aluno. Verifique os dados.", "danger")
-    return redirect(url_for('alunos'))
+    finally:
+        conn.close()
 
-finally:
-    conn.close()
+
 
 # --- LOGOUT ---
 @app.route('/logout')
