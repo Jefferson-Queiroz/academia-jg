@@ -203,7 +203,8 @@ def pagar(id):
     ).fetchone()
 
     if request.method == 'POST':
-        valor = float(request.form['valor'])
+        valor = float(request.form.get('valor', 0))
+
         hoje = date.today()
         nova_data = hoje + timedelta(days=30)
         try:
@@ -253,7 +254,8 @@ def alunos():
         try:
             hoje = date.today()
             vencimento = hoje + timedelta(days=30)
-            valor = float(request.form['valor'])
+            valor = float(request.form.get('valor', 0))
+
 
             cursor = conn.cursor()
 
