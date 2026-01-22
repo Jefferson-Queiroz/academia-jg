@@ -5,14 +5,25 @@
 
 <form method="GET" class="row g-3 mb-3">
     <div class="col-md-6">
-        <input type="text" name="busca" class="form-control" placeholder="Buscar aluno pelo nome"
-            value="{{ request.args.get('busca', '') }}">
+        <input
+            type="text"
+            name="busca"
+            class="form-control"
+            placeholder="Buscar aluno pelo nome"
+            value="{{ request.args.get('busca', '') }}"
+        >
     </div>
+
     <div class="col-md-2">
-        <button class="btn btn-primary w-100">🔍 Buscar</button>
+        <button class="btn btn-primary w-100">
+            🔍 Buscar
+        </button>
     </div>
+
     <div class="col-md-2">
-        <a href="{{ url_for('lista_alunos') }}" class="btn btn-secondary w-100">Limpar</a>
+        <a href="{{ url_for('lista_alunos') }}" class="btn btn-secondary w-100">
+            Limpar
+        </a>
     </div>
 </form>
 
@@ -27,33 +38,40 @@
                     <th>Telefone</th>
                     <th>Plano</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th class="text-center">Ações</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for aluno in alunos %}
                 <tr>
                     <td>{{ aluno.nome }}</td>
                     <td>{{ aluno.telefone }}</td>
                     <td>{{ aluno.plano }}</td>
-                    <td>{{ aluno.status }}</td>
-                    <td class="d-flex gap-2">
+                    <td>{{ aluno.status if aluno.status else '—' }}</td>
+
+                    <td class="d-flex gap-2 justify-content-center">
 
                         {% if aluno.whatsapp %}
-                        <a href="{{ aluno.whatsapp }}" target="_blank" class="btn btn-success btn-sm">
+                        <a href="{{ aluno.whatsapp }}"
+                           target="_blank"
+                           class="btn btn-success btn-sm"
+                           title="WhatsApp">
                             📲
                         </a>
                         {% endif %}
 
-                        <a href="{{ url_for('editar_aluno', id=aluno['id']) }}"
-                           class="btn btn-warning btn-sm">
-                            ✏️ Editar
+                        <a href="{{ url_for('editar_aluno', id=aluno.id) }}"
+                           class="btn btn-warning btn-sm"
+                           title="Editar">
+                            ✏️
                         </a>
 
-                        <a href="{{ url_for('excluir_aluno', id=aluno['id']) }}"
+                        <a href="{{ url_for('excluir_aluno', id=aluno.id) }}"
                            class="btn btn-danger btn-sm"
-                           onclick="return confirm('Deseja excluir este aluno?')">
-                            🗑 Excluir
+                           onclick="return confirm('Deseja excluir este aluno?')"
+                           title="Excluir">
+                            🗑
                         </a>
 
                     </td>
@@ -61,8 +79,11 @@
                 {% endfor %}
             </tbody>
         </table>
+
         {% else %}
-        <p class="text-muted">Nenhum aluno cadastrado.</p>
+        <p class="text-muted mb-0">
+            Nenhum aluno cadastrado.
+        </p>
         {% endif %}
 
         <a href="{{ url_for('alunos') }}" class="btn btn-secondary mt-3">
